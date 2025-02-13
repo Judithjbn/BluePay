@@ -3,13 +3,10 @@ import { db } from "./db";
 import { eq, and, gte, lte } from "drizzle-orm";
 import { users, transactions } from "@shared/schema";
 import session from "express-session";
-import SQLiteStore from "better-sqlite3-session-store";
-import Database from "better-sqlite3";
-import path from 'path';
+import connectPg from "connect-pg-simple";
+import { pool } from "./db";
 
-// Crear una instancia de Database para las sesiones en el directorio data
-const sessionDb = new Database(path.join(process.cwd(), 'data', 'sessions.db'));
-const SQLiteStoreFactory = SQLiteStore(session);
+const PostgresSessionStore = connectPg(session);
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -26,12 +23,9 @@ export class DatabaseStorage implements IStorage {
   sessionStore: session.Store;
 
   constructor() {
-    this.sessionStore = new SQLiteStoreFactory({
-      client: sessionDb,
-      expired: {
-        clear: true,
-        intervalMs: 900000 //ms = 15min
-      }
+    this.sessionStore = new PostgresSessionStore({
+      pool,
+      createTableIfMissing: true
     });
   }
 
@@ -69,7 +63,7 @@ export class DatabaseStorage implements IStorage {
         ...transaction,
         userId,
         amount,
-        date: date.getTime() // Store as timestamp for SQLite
+        date // Use the validated date
       })
       .returning();
     return newTransaction;
@@ -85,27 +79,24 @@ export class DatabaseStorage implements IStorage {
       throw new Error("Rango de fechas inválido");
     }
 
-    // Convert dates to timestamps for SQLite
-    const startTimestamp = startDate.getTime();
-    const endTimestamp = endDate.getTime();
+    // Convert dates to UTC to match database storage
+    const utcStart = new Date(startDate.toISOString());
+    const utcEnd = new Date(endDate.toISOString());
 
-    const results = await db
+    // Ensure end date includes the entire day
+    utcEnd.setHours(23, 59, 59, 999);
+
+    return await db
       .select()
       .from(transactions)
       .where(
         and(
           eq(transactions.userId, userId),
-          gte(transactions.date, startTimestamp),
-          lte(transactions.date, endTimestamp)
+          gte(transactions.date, utcStart),
+          lte(transactions.date, utcEnd)
         )
       )
       .orderBy(transactions.date);
-
-    // Convert timestamps back to Date objects
-    return results.map(t => ({
-      ...t,
-      date: new Date(t.date)
-    }));
   }
 
   async getCurrentBalance(userId: number): Promise<number> {

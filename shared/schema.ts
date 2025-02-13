@@ -1,23 +1,22 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { pgTable, text, serial, integer, timestamp, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
-import { sql } from "drizzle-orm";
 
-export const users = sqliteTable("users", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
 });
 
-export const transactions = sqliteTable("transactions", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const transactions = pgTable("transactions", {
+  id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
   amount: integer("amount").notNull(),
   type: text("type", { enum: ["payment", "withdrawal"] }).notNull(),
   description: text("description"),
   payer: text("payer"), // For payments
   withdrawnBy: text("withdrawn_by"), // For withdrawals
-  date: integer("date").notNull().default(sql`CURRENT_TIMESTAMP`),
+  date: timestamp("date", { mode: "date" }).notNull().defaultNow(),
   notes: text("notes"),
 });
 
