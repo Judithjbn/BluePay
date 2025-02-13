@@ -7,12 +7,18 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+// Obtener la URL base de la API desde una variable de entorno o usar la URL local por defecto
+const API_URL = import.meta.env.VITE_API_URL || "";
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  // Construir la URL completa usando la URL base de la API
+  const fullUrl = `${API_URL}${url}`;
+
+  const res = await fetch(fullUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
@@ -31,7 +37,7 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     // Construir la URL con los parámetros de consulta
     const [baseUrl, params] = queryKey;
-    const url = new URL(baseUrl as string, window.location.origin);
+    const url = new URL(`${API_URL}${baseUrl as string}`);
 
     if (params && typeof params === 'object') {
       Object.entries(params).forEach(([key, value]) => {
