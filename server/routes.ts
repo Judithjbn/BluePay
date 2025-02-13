@@ -12,23 +12,29 @@ export function registerRoutes(app: Express): Server {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
-      // Parse dates and validate
-      const startDate = new Date(req.query.startDate as string);
-      const endDate = new Date(req.query.endDate as string);
+      const { startDate, endDate } = req.query;
+
+      if (typeof startDate !== 'string' || typeof endDate !== 'string') {
+        return res.status(400).json({ message: "Las fechas son requeridas" });
+      }
+
+      // Parse dates using the provided string format yyyy-MM-dd
+      const parsedStartDate = new Date(startDate);
+      const parsedEndDate = new Date(endDate);
 
       // Validate dates
-      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
         return res.status(400).json({ message: "Formato de fecha inválido" });
       }
 
-      // Set the time to start of day for start date and end of day for end date
-      startDate.setHours(0, 0, 0, 0);
-      endDate.setHours(23, 59, 59, 999);
+      // Set time to start of day for start date and end of day for end date
+      parsedStartDate.setUTCHours(0, 0, 0, 0);
+      parsedEndDate.setUTCHours(23, 59, 59, 999);
 
       const transactions = await storage.getTransactions(
         req.user!.id,
-        startDate,
-        endDate
+        parsedStartDate,
+        parsedEndDate
       );
 
       res.json(transactions);
