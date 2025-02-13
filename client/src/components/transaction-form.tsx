@@ -35,7 +35,7 @@ import { z } from "zod";
 
 const formSchema = z.object({
   type: z.enum(["payment", "withdrawal"]),
-  date: z.date(),
+  date: z.coerce.date(),
   amount: z.number().min(0, "La cantidad debe ser mayor que 0"),
   payer: z.string().optional(),
   withdrawnBy: z.string().optional(),
@@ -70,7 +70,7 @@ export function TransactionForm() {
       const payload: InsertTransaction = {
         ...data,
         amount: Number(data.amount),
-        date: data.date.toISOString(),
+        date: data.date, // Remove toISOString() call, send Date directly
       };
       const res = await apiRequest("POST", "/api/transactions", payload);
       return res.json();
