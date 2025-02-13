@@ -21,7 +21,11 @@ export function TransactionForm() {
     resolver: zodResolver(insertTransactionSchema),
     defaultValues: {
       type: "payment",
-      date: new Date().toISOString(),
+      date: new Date(),
+      amount: "",
+      payer: "",
+      withdrawnBy: "",
+      notes: "",
     },
   });
 

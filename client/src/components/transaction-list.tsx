@@ -26,6 +26,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Download, Loader2 } from "lucide-react";
 import { exportToExcel } from "@/lib/excel";
+import { cn } from "@/lib/utils";
 
 function getLastSixMonths() {
   const months = [];
