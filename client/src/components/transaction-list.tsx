@@ -44,12 +44,16 @@ export function TransactionList() {
   const months = getLastSixMonths();
   const [selectedMonth, setSelectedMonth] = useState(months[0]);
 
+  // Construcción de fechas inicio y fin del mes
+  const start = startOfMonth(selectedMonth);
+  const end = endOfMonth(selectedMonth);
+
   const { data: transactions, isLoading } = useQuery<Transaction[]>({
     queryKey: [
       "/api/transactions",
       {
-        startDate: format(startOfMonth(selectedMonth), 'yyyy-MM-dd'),
-        endDate: format(endOfMonth(selectedMonth), 'yyyy-MM-dd'),
+        startDate: format(start, 'yyyy-MM-dd'),
+        endDate: format(end, 'yyyy-MM-dd'),
       },
     ],
   });
@@ -61,6 +65,8 @@ export function TransactionList() {
       </div>
     );
   }
+
+  const hasTransactions = transactions && transactions.length > 0;
 
   return (
     <Card>
@@ -95,6 +101,7 @@ export function TransactionList() {
               variant="outline"
               size="icon"
               onClick={() => exportToExcel(transactions || [], selectedMonth)}
+              disabled={!hasTransactions}
             >
               <Download className="h-4 w-4" />
             </Button>
@@ -102,49 +109,55 @@ export function TransactionList() {
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Fecha</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Cantidad</TableHead>
-              <TableHead>Pagador/Retirado Por</TableHead>
-              <TableHead>Notas</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {transactions?.map((transaction) => (
-              <TableRow key={transaction.id}>
-                <TableCell>
-                  {format(new Date(transaction.date), "dd/MM/yyyy")}
-                </TableCell>
-                <TableCell className="capitalize">
-                  {transaction.type === "payment" ? "Pago" : "Retiro"}
-                </TableCell>
-                <TableCell
-                  className={cn(
-                    transaction.type === "payment"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  )}
-                >
-                  {new Intl.NumberFormat('es-ES', {
-                    style: 'currency',
-                    currency: 'EUR',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  }).format(transaction.amount)}
-                </TableCell>
-                <TableCell>
-                  {transaction.type === "payment"
-                    ? transaction.payer
-                    : transaction.withdrawnBy}
-                </TableCell>
-                <TableCell>{transaction.notes}</TableCell>
+        {!hasTransactions ? (
+          <div className="text-center py-8 text-muted-foreground">
+            No hay transacciones para este mes
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Fecha</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>Cantidad</TableHead>
+                <TableHead>Pagador/Retirado Por</TableHead>
+                <TableHead>Notas</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {transactions.map((transaction) => (
+                <TableRow key={transaction.id}>
+                  <TableCell>
+                    {format(new Date(transaction.date), "dd/MM/yyyy")}
+                  </TableCell>
+                  <TableCell className="capitalize">
+                    {transaction.type === "payment" ? "Pago" : "Retiro"}
+                  </TableCell>
+                  <TableCell
+                    className={cn(
+                      transaction.type === "payment"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    )}
+                  >
+                    {new Intl.NumberFormat('es-ES', {
+                      style: 'currency',
+                      currency: 'EUR',
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    }).format(transaction.amount)}
+                  </TableCell>
+                  <TableCell>
+                    {transaction.type === "payment"
+                      ? transaction.payer
+                      : transaction.withdrawnBy}
+                  </TableCell>
+                  <TableCell>{transaction.notes}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
     </Card>
   );
