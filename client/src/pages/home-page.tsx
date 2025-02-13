@@ -1,4 +1,11 @@
-// Keep imports unchanged...
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TransactionForm } from "@/components/transaction-form";
+import { TransactionList } from "@/components/transaction-list";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function HomePage() {
   const { user, logoutMutation } = useAuth();
