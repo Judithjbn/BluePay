@@ -12,7 +12,10 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const apiUrl = import.meta.env.VITE_API_URL || '';
+  const fullUrl = `${apiUrl}${url}`;
+
+  const res = await fetch(fullUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
@@ -29,9 +32,9 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    // Construir la URL con los parámetros de consulta
     const [baseUrl, params] = queryKey;
-    const url = new URL(baseUrl as string, window.location.origin);
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    const url = new URL(`${apiUrl}${baseUrl}`, window.location.origin);
 
     if (params && typeof params === 'object') {
       Object.entries(params).forEach(([key, value]) => {
