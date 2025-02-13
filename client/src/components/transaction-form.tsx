@@ -32,11 +32,11 @@ export function TransactionForm() {
 
   const mutation = useMutation({
     mutationFn: async (data: InsertTransaction) => {
-      // Convert amount to number if it's a string
+      // Convert amount to number if it's a string and multiply by 100 for cents
       const amount = typeof data.amount === 'string' ? parseFloat(data.amount) : data.amount;
       const payload = {
         ...data,
-        amount,
+        amount: amount * 100, // Convert to cents for storage
         date: new Date(data.date).toISOString(),
       };
       const res = await apiRequest("POST", "/api/transactions", payload);

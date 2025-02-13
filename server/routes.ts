@@ -21,6 +21,10 @@ export function registerRoutes(app: Express): Server {
         return res.status(400).json({ message: "Formato de fecha inválido" });
       }
 
+      // Set the time to start of day for start date and end of day for end date
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(23, 59, 59, 999);
+
       const transactions = await storage.getTransactions(
         req.user!.id,
         startDate,
