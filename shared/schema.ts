@@ -16,7 +16,7 @@ export const transactions = pgTable("transactions", {
   description: text("description"),
   payer: text("payer"), // For payments
   withdrawnBy: text("withdrawn_by"), // For withdrawals
-  date: timestamp("date").notNull().defaultNow(),
+  date: timestamp("date", { mode: "date" }).notNull().defaultNow(),
   notes: text("notes"),
 });
 

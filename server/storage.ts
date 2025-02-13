@@ -44,25 +44,40 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTransaction(userId: number, transaction: InsertTransaction): Promise<Transaction> {
+    // Ensure date is a valid Date object
+    const date = new Date(transaction.date);
+    if (isNaN(date.getTime())) {
+      throw new Error("Invalid date");
+    }
+
     const [newTransaction] = await db
       .insert(transactions)
       .values({
         ...transaction,
         userId,
+        date // Use the validated date
       })
       .returning();
     return newTransaction;
   }
 
   async getTransactions(userId: number, startDate: Date, endDate: Date): Promise<Transaction[]> {
+    // Ensure dates are valid
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      throw new Error("Invalid date range");
+    }
+
     return await db
       .select()
       .from(transactions)
       .where(
         and(
           eq(transactions.userId, userId),
-          gte(transactions.date, startDate),
-          lte(transactions.date, endDate)
+          gte(transactions.date, start),
+          lte(transactions.date, end)
         )
       )
       .orderBy(transactions.date);

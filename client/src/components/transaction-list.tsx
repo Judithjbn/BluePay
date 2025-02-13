@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Loader2 } from "lucide-react";
 import { exportToExcel } from "@/lib/excel";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 function getLastSixMonths() {
   const months = [];
@@ -39,7 +40,7 @@ function getLastSixMonths() {
 
 export function TransactionList() {
   const months = getLastSixMonths();
-  const [selectedMonth] = months;
+  const [selectedMonth, setSelectedMonth] = useState(months[0]);
 
   const { data: transactions, isLoading } = useQuery<Transaction[]>({
     queryKey: [
@@ -71,7 +72,8 @@ export function TransactionList() {
           </div>
           <div className="flex gap-2">
             <Select
-              defaultValue={selectedMonth.toISOString()}
+              value={selectedMonth.toISOString()}
+              onValueChange={(value) => setSelectedMonth(new Date(value))}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select month" />
