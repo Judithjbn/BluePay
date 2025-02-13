@@ -29,7 +29,7 @@ export const insertTransactionSchema = createInsertSchema(transactions)
   .omit({ id: true, userId: true })
   .extend({
     amount: z.string().transform((val) => Math.round(parseFloat(val) * 100)),
-    date: z.string().transform((val) => new Date(val)),
+    date: z.coerce.date(),
   });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

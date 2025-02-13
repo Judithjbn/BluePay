@@ -37,7 +37,14 @@ export function TransactionForm() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/transactions"] });
       queryClient.invalidateQueries({ queryKey: ["/api/balance"] });
-      form.reset();
+      form.reset({
+        type: "payment",
+        date: new Date(),
+        amount: "",
+        payer: "",
+        withdrawnBy: "",
+        notes: "",
+      });
       toast({
         title: "Success",
         description: "Transaction created successfully",
@@ -99,7 +106,7 @@ export function TransactionForm() {
                       )}
                     >
                       {field.value ? (
-                        format(new Date(field.value), "PPP")
+                        format(field.value, "PPP")
                       ) : (
                         <span>Pick a date</span>
                       )}
@@ -110,10 +117,8 @@ export function TransactionForm() {
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    selected={new Date(field.value)}
-                    onSelect={(date) =>
-                      field.onChange(date?.toISOString())
-                    }
+                    selected={field.value}
+                    onSelect={field.onChange}
                     disabled={(date) =>
                       date > new Date() || date < new Date("1900-01-01")
                     }
@@ -151,7 +156,7 @@ export function TransactionForm() {
               <FormItem>
                 <FormLabel>Payer</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} value={field.value || ""} />
                 </FormControl>
               </FormItem>
             )}
@@ -166,7 +171,7 @@ export function TransactionForm() {
               <FormItem>
                 <FormLabel>Withdrawn By</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} value={field.value || ""} />
                 </FormControl>
               </FormItem>
             )}
@@ -180,7 +185,7 @@ export function TransactionForm() {
             <FormItem>
               <FormLabel>Notes</FormLabel>
               <FormControl>
-                <Textarea {...field} />
+                <Textarea {...field} value={field.value || ""} />
               </FormControl>
             </FormItem>
           )}
