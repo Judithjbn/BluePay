@@ -106,20 +106,23 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Login endpoint
+  // Login endpoint with explicit types
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
-      if (err) return next(err);
-      if (!user) {
-        return res.status(401).send(info?.message || "Invalid credentials");
-      }
-      req.login(user, (err) => {
+    passport.authenticate(
+      "local",
+      (err: Error | null, user: SelectUser | false, info: { message: string } | undefined) => {
         if (err) return next(err);
-        // Don't send password back to client
-        const { password: _, ...userWithoutPassword } = user;
-        res.json(userWithoutPassword);
-      });
-    })(req, res, next);
+        if (!user) {
+          return res.status(401).send(info?.message || "Invalid credentials");
+        }
+        req.login(user, (err) => {
+          if (err) return next(err);
+          // Don't send password back to client
+          const { password: _, ...userWithoutPassword } = user;
+          res.json(userWithoutPassword);
+        });
+      }
+    )(req, res, next);
   });
 
   // Logout endpoint
