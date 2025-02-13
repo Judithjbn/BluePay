@@ -31,8 +31,9 @@ import { useState } from "react";
 
 function getLastSixMonths() {
   const months = [];
+  const now = new Date();
   for (let i = 0; i < 6; i++) {
-    const date = subMonths(new Date(), i);
+    const date = subMonths(now, i);
     months.push(startOfMonth(date));
   }
   return months;
@@ -46,8 +47,8 @@ export function TransactionList() {
     queryKey: [
       "/api/transactions",
       {
-        startDate: startOfMonth(selectedMonth).toISOString(),
-        endDate: endOfMonth(selectedMonth).toISOString(),
+        startDate: format(startOfMonth(selectedMonth), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
+        endDate: format(endOfMonth(selectedMonth), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
       },
     ],
   });
@@ -72,7 +73,7 @@ export function TransactionList() {
           </div>
           <div className="flex gap-2">
             <Select
-              value={selectedMonth.toISOString()}
+              value={format(selectedMonth, "yyyy-MM-dd")}
               onValueChange={(value) => setSelectedMonth(new Date(value))}
             >
               <SelectTrigger className="w-[180px]">
@@ -81,8 +82,8 @@ export function TransactionList() {
               <SelectContent>
                 {months.map((month) => (
                   <SelectItem
-                    key={month.toISOString()}
-                    value={month.toISOString()}
+                    key={format(month, "yyyy-MM-dd")}
+                    value={format(month, "yyyy-MM-dd")}
                   >
                     {format(month, "MMMM yyyy")}
                   </SelectItem>
