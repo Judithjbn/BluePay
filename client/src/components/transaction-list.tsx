@@ -130,7 +130,9 @@ export function TransactionList() {
                 >
                   {new Intl.NumberFormat('es-ES', {
                     style: 'currency',
-                    currency: 'EUR'
+                    currency: 'EUR',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
                   }).format(transaction.amount / 100)}
                 </TableCell>
                 <TableCell>

@@ -32,7 +32,14 @@ export function TransactionForm() {
 
   const mutation = useMutation({
     mutationFn: async (data: InsertTransaction) => {
-      const res = await apiRequest("POST", "/api/transactions", data);
+      // Convert amount to number if it's a string
+      const amount = typeof data.amount === 'string' ? parseFloat(data.amount) : data.amount;
+      const payload = {
+        ...data,
+        amount,
+        date: new Date(data.date).toISOString(),
+      };
+      const res = await apiRequest("POST", "/api/transactions", payload);
       return res.json();
     },
     onSuccess: () => {

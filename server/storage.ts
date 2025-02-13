@@ -50,11 +50,18 @@ export class DatabaseStorage implements IStorage {
       throw new Error("Fecha inválida");
     }
 
+    // Ensure amount is a valid number
+    const amount = Math.round(Number(transaction.amount));
+    if (isNaN(amount)) {
+      throw new Error("Cantidad inválida");
+    }
+
     const [newTransaction] = await db
       .insert(transactions)
       .values({
         ...transaction,
         userId,
+        amount,
         date // Use the validated date
       })
       .returning();
@@ -74,6 +81,9 @@ export class DatabaseStorage implements IStorage {
     // Convert dates to UTC to match database storage
     const utcStart = new Date(startDate.toISOString());
     const utcEnd = new Date(endDate.toISOString());
+
+    // Ensure end date includes the entire day
+    utcEnd.setHours(23, 59, 59, 999);
 
     return await db
       .select()

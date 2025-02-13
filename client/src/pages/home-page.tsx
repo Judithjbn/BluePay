@@ -59,7 +59,9 @@ export default function HomePage() {
               )}>
                 {new Intl.NumberFormat('es-ES', {
                   style: 'currency',
-                  currency: 'EUR'
+                  currency: 'EUR',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
                 }).format((balanceData?.balance || 0) / 100)}
               </p>
             </CardContent>
