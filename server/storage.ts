@@ -5,9 +5,10 @@ import { users, transactions } from "@shared/schema";
 import session from "express-session";
 import SQLiteStore from "better-sqlite3-session-store";
 import Database from "better-sqlite3";
+import path from 'path';
 
-// Crear una instancia de Database para las sesiones
-const sessionDb = new Database("sessions.db");
+// Crear una instancia de Database para las sesiones en el directorio data
+const sessionDb = new Database(path.join(process.cwd(), 'data', 'sessions.db'));
 const SQLiteStoreFactory = SQLiteStore(session);
 
 export interface IStorage {
@@ -25,7 +26,6 @@ export class DatabaseStorage implements IStorage {
   sessionStore: session.Store;
 
   constructor() {
-    // Inicializar el store con la instancia de la base de datos
     this.sessionStore = new SQLiteStoreFactory({
       client: sessionDb,
       expired: {

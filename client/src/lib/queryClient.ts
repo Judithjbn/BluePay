@@ -7,15 +7,16 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-// Obtener la URL base de la API desde una variable de entorno o usar la URL local por defecto
-const API_URL = import.meta.env.VITE_API_URL || "";
+// En desarrollo usamos la URL relativa, en producción necesitamos la URL completa
+const API_URL = import.meta.env.PROD 
+  ? import.meta.env.VITE_API_URL 
+  : "";
 
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  // Construir la URL completa usando la URL base de la API
   const fullUrl = `${API_URL}${url}`;
 
   const res = await fetch(fullUrl, {
@@ -35,7 +36,6 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    // Construir la URL con los parámetros de consulta
     const [baseUrl, params] = queryKey;
     const url = new URL(`${API_URL}${baseUrl as string}`);
 
