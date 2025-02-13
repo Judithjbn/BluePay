@@ -23,7 +23,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { InsertTransaction, insertTransactionSchema } from "@shared/schema";
+import { type InsertTransaction } from "@shared/schema";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -33,12 +33,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { z } from "zod";
 
-const formSchema = insertTransactionSchema.extend({
-  amount: z.coerce.number().min(0, "La cantidad debe ser mayor que 0"),
+const formSchema = z.object({
+  type: z.enum(["payment", "withdrawal"]),
   date: z.date(),
-});
+  amount: z.number().min(0, "La cantidad debe ser mayor que 0"),
+  payer: z.string().optional(),
+  withdrawnBy: z.string().optional(),
+  notes: z.string().optional(),
+}) satisfies z.ZodType<FormData>;
 
-type FormData = z.infer<typeof formSchema>;
+type FormData = {
+  type: "payment" | "withdrawal";
+  date: Date;
+  amount: number;
+  payer?: string;
+  withdrawnBy?: string;
+  notes?: string;
+};
 
 export function TransactionForm() {
   const { toast } = useToast();
@@ -56,7 +67,7 @@ export function TransactionForm() {
 
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
-      const payload = {
+      const payload: InsertTransaction = {
         ...data,
         amount: Number(data.amount),
         date: data.date.toISOString(),

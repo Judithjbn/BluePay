@@ -1,0 +1,91 @@
+Parece que el error proviene de Zod, la biblioteca de validación de esquemas que estás utilizando en tu proyecto. Netlify no puede compilar el proyecto debido a conflictos en los tipos de Zod y TypeScript.
+
+Aquí hay algunos pasos para solucionar el problema:
+
+1. Verifica la versión de Zod
+Podría haber un problema con versiones incompatibles de Zod en Netlify. En tu proyecto local, revisa la versión que tienes instalada:
+
+sh
+Copiar
+Editar
+npm list zod
+Si hay una versión antigua o incompatible, actualízala a la última versión estable:
+
+sh
+Copiar
+Editar
+npm install zod@latest
+Luego, intenta hacer el deploy de nuevo.
+
+2. Borra y reinstala las dependencias
+Netlify a veces usa versiones de paquetes que no coinciden exactamente con las de tu entorno de desarrollo. Prueba eliminando y reinstalando todas las dependencias:
+
+sh
+Copiar
+Editar
+rm -rf node_modules package-lock.json
+npm install
+Después de esto, intenta hacer el deploy otra vez.
+
+3. Asegúrate de que no haya múltiples versiones de Zod
+El error menciona una incompatibilidad entre diferentes instancias de Zod:
+
+pgsql
+Copiar
+Editar
+Type 'Zod.ZodIssue' is not assignable to type 'import(".../zod/lib/ZodError").ZodIssue'
+Esto indica que podrían haber múltiples versiones de Zod en el proyecto. Para verificarlo, usa:
+
+sh
+Copiar
+Editar
+npm ls zod
+Si hay más de una versión instalada, intenta forzar que todas las dependencias usen la misma versión con:
+
+sh
+Copiar
+Editar
+npm dedupe
+Si el problema persiste, fuerza la resolución de la versión en tu package.json:
+
+json
+Copiar
+Editar
+"resolutions": {
+  "zod": "^3.22.0"
+}
+Luego, ejecuta:
+
+sh
+Copiar
+Editar
+npm install
+y vuelve a probar el deploy.
+
+4. Verifica TypeScript
+Asegúrate de que tu versión de TypeScript sea compatible con Zod. Si estás usando una versión antigua, actualízala:
+
+sh
+Copiar
+Editar
+npm install typescript@latest
+También revisa tu configuración de TypeScript en tsconfig.json. Prueba añadir lo siguiente si no está:
+
+json
+Copiar
+Editar
+{
+  "compilerOptions": {
+    "skipLibCheck": true
+  }
+}
+Esto evita que TypeScript haga chequeos innecesarios en los tipos de las bibliotecas externas, lo que puede solucionar conflictos con Zod.
+
+5. Prueba el build localmente
+Antes de subirlo a Netlify, prueba si el build funciona en tu máquina local:
+
+sh
+Copiar
+Editar
+npm run build
+Si hay errores, revísalos y corrígelos antes de intentar el deploy nuevamente.
