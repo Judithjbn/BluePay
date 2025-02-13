@@ -22,7 +22,7 @@ export function TransactionForm() {
     defaultValues: {
       type: "payment",
       date: new Date(),
-      amount: "",
+      amount: 0, // Changed default to 0
       payer: "",
       withdrawnBy: "",
       notes: "",
@@ -40,7 +40,7 @@ export function TransactionForm() {
       form.reset({
         type: "payment",
         date: new Date(),
-        amount: "",
+        amount: 0, // Changed default to 0
         payer: "",
         withdrawnBy: "",
         notes: "",
@@ -142,6 +142,7 @@ export function TransactionForm() {
                   step="0.01"
                   placeholder="0.00"
                   {...field}
+                  onChange={(e) => field.onChange(parseFloat(e.target.value))} // Corrected onChange
                 />
               </FormControl>
             </FormItem>
