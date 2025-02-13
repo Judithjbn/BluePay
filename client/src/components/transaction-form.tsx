@@ -31,11 +31,19 @@ import { Calendar as CalendarIcon, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { z } from "zod";
+
+const formSchema = insertTransactionSchema.extend({
+  amount: z.coerce.number().min(0, "La cantidad debe ser mayor que 0"),
+  date: z.date(),
+});
+
+type FormData = z.infer<typeof formSchema>;
 
 export function TransactionForm() {
   const { toast } = useToast();
-  const form = useForm<InsertTransaction>({
-    resolver: zodResolver(insertTransactionSchema),
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       type: "payment",
       date: new Date(),
@@ -47,11 +55,11 @@ export function TransactionForm() {
   });
 
   const mutation = useMutation({
-    mutationFn: async (data: InsertTransaction) => {
+    mutationFn: async (data: FormData) => {
       const payload = {
         ...data,
         amount: Number(data.amount),
-        date: new Date(data.date).toISOString(),
+        date: data.date.toISOString(),
       };
       const res = await apiRequest("POST", "/api/transactions", payload);
       return res.json();

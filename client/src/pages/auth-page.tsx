@@ -6,21 +6,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { insertUserSchema, type InsertUser } from "@shared/schema";
 import { Redirect } from "wouter";
 import { Loader2 } from "lucide-react";
 
 type LoginData = Pick<InsertUser, "username" | "password">;
 
+const loginSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
+});
+
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
 
   const loginForm = useForm<LoginData>({
-    resolver: zodResolver(insertUserSchema),
+    resolver: zodResolver(loginSchema),
   });
 
   const registerForm = useForm<InsertUser>({
-    resolver: zodResolver(insertUserSchema),
+    resolver: zodResolver(insertUserSchema.omit({ id: true })),
   });
 
   if (user) {
@@ -46,7 +52,7 @@ export default function AuthPage() {
               <TabsContent value="login">
                 <form
                   onSubmit={loginForm.handleSubmit((data) =>
-                    loginMutation.mutate(data as LoginData)
+                    loginMutation.mutate(data)
                   )}
                   className="space-y-4"
                 >
@@ -81,7 +87,7 @@ export default function AuthPage() {
               <TabsContent value="register">
                 <form
                   onSubmit={registerForm.handleSubmit((data) =>
-                    registerMutation.mutate(data as InsertUser)
+                    registerMutation.mutate(data)
                   )}
                   className="space-y-4"
                 >

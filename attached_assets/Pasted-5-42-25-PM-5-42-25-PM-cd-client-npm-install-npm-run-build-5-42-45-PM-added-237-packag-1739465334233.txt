@@ -1,0 +1,52 @@
+5:42:25 PM: ​
+5:42:25 PM: $ cd client && npm install && npm run build
+5:42:45 PM: added 237 packages, and audited 238 packages in 19s
+5:42:45 PM: 44 packages are looking for funding
+5:42:45 PM:   run `npm fund` for details
+5:42:45 PM: found 0 vulnerabilities
+5:42:45 PM: > bluepay-client@1.0.0 build
+5:42:45 PM: > cd .. && npm install && cd client && tsc && vite build
+5:42:46 PM: up to date, audited 483 packages in 974ms
+5:42:46 PM: 60 packages are looking for funding
+5:42:46 PM:   run `npm fund` for details
+5:42:46 PM: 2 vulnerabilities (1 moderate, 1 high)
+5:42:46 PM: To address issues that do not require attention, run:
+5:42:46 PM:   npm audit fix
+5:42:46 PM: Some issues need review, and may require choosing
+5:42:46 PM: a different dependency.
+5:42:46 PM: Run `npm audit` for details.
+5:42:52 PM: src/components/transaction-form.tsx(38,27): error TS2345: Argument of type 'ZodObject<extendShape<Omit<{ id: ZodOptional<ZodNumber>; userId: ZodNumber; amount: ZodNumber; type: ZodEnum<["payment", "withdrawal"]>; description: ZodOptional<...>; payer: ZodOptional<...>; withdrawnBy: ZodOptional<...>; date: ZodOptional<...>; notes: ZodOptional<...>; }, "id" | "userId">, { ...; }>, "strip", Zod...' is not assignable to parameter of type 'ZodType<any, any, any>'.
+5:42:52 PM:   Type 'ZodObject<extendShape<Omit<{ id: ZodOptional<ZodNumber>; userId: ZodNumber; amount: ZodNumber; type: ZodEnum<["payment", "withdrawal"]>; description: ZodOptional<...>; payer: ZodOptional<...>; withdrawnBy: ZodOptional<...>; date: ZodOptional<...>; notes: ZodOptional<...>; }, "id" | "userId">, { ...; }>, "strip", Zod...' is missing the following properties from type 'ZodType<any, any, any>': "~standard", "~validate"
+5:42:52 PM: src/pages/auth-page.tsx(19,27): error TS2345: Argument of type 'ZodObject<Pick<{ id: ZodOptional<ZodNumber>; username: ZodString; password: ZodString; }, "username" | "password">, "strip", ZodTypeAny, { ...; }, { ...; }>' is not assignable to parameter of type 'ZodType<any, any, any>'.
+5:42:52 PM:   Type 'ZodObject<Pick<{ id: ZodOptional<ZodNumber>; username: ZodString; password: ZodString; }, "username" | "password">, "strip", ZodTypeAny, { ...; }, { ...; }>' is missing the following properties from type 'ZodType<any, any, any>': "~standard", "~validate"
+5:42:52 PM: src/pages/auth-page.tsx(23,27): error TS2345: Argument of type 'ZodObject<Pick<{ id: ZodOptional<ZodNumber>; username: ZodString; password: ZodString; }, "username" | "password">, "strip", ZodTypeAny, { ...; }, { ...; }>' is not assignable to parameter of type 'ZodType<any, any, any>'.
+5:42:52 PM:   Type 'ZodObject<Pick<{ id: ZodOptional<ZodNumber>; username: ZodString; password: ZodString; }, "username" | "password">, "strip", ZodTypeAny, { ...; }, { ...; }>' is missing the following properties from type 'ZodType<any, any, any>': "~standard", "~validate"
+5:42:52 PM: ​
+5:42:52 PM: "build.command" failed                                        
+5:42:52 PM: ────────────────────────────────────────────────────────────────
+5:42:52 PM: ​
+5:42:52 PM:   Error message
+5:42:52 PM:   Command failed with exit code 2: cd client && npm install && npm run build (https://ntl.fyi/exit-code-2)
+5:42:52 PM: ​
+5:42:52 PM:   Error location
+5:42:52 PM:   In build.command from netlify.toml:
+5:42:52 PM:   cd client && npm install && npm run build
+5:42:52 PM: ​
+5:42:52 PM:   Resolved config
+5:42:52 PM:   build:
+5:42:52 PM:     command: cd client && npm install && npm run build
+5:42:52 PM:     commandOrigin: config
+5:42:52 PM:     environment:
+5:42:52 PM:       - DATABASE_URL
+5:42:52 PM:       - NODE_VERSION
+5:42:52 PM:     publish: /opt/build/repo/client/dist
+5:42:52 PM:     publishOrigin: config
+5:42:52 PM:   redirects:
+5:42:53 PM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)
+5:42:53 PM:     - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+5:42:53 PM: Build failed due to a user error: Build script returned non-zero exit code: 2
+5:42:53 PM: Failing build: Failed to build site
+5:42:53 PM: Finished processing build request in 58.446s
