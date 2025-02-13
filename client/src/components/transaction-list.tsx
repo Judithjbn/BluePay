@@ -133,7 +133,7 @@ export function TransactionList() {
                     currency: 'EUR',
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
-                  }).format(transaction.amount / 100)}
+                  }).format(transaction.amount)}
                 </TableCell>
                 <TableCell>
                   {transaction.type === "payment"

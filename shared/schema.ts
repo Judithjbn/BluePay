@@ -11,7 +11,7 @@ export const users = pgTable("users", {
 export const transactions = pgTable("transactions", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
-  amount: integer("amount").notNull(), // Store in cents
+  amount: integer("amount").notNull(),
   type: text("type", { enum: ["payment", "withdrawal"] }).notNull(),
   description: text("description"),
   payer: text("payer"), // For payments
@@ -28,7 +28,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertTransactionSchema = createInsertSchema(transactions)
   .omit({ id: true, userId: true })
   .extend({
-    amount: z.coerce.number().transform((val) => Math.round(val * 100)), // Convert dollars to cents
+    amount: z.coerce.number(),
     date: z.coerce.date(),
   });
 

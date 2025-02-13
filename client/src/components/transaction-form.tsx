@@ -1,9 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -32,11 +48,9 @@ export function TransactionForm() {
 
   const mutation = useMutation({
     mutationFn: async (data: InsertTransaction) => {
-      // Convert amount to number if it's a string and multiply by 100 for cents
-      const amount = typeof data.amount === 'string' ? parseFloat(data.amount) : data.amount;
       const payload = {
         ...data,
-        amount: amount * 100, // Convert to cents for storage
+        amount: Number(data.amount),
         date: new Date(data.date).toISOString(),
       };
       const res = await apiRequest("POST", "/api/transactions", payload);
@@ -79,10 +93,7 @@ export function TransactionForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Tipo</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar tipo" />
@@ -110,7 +121,7 @@ export function TransactionForm() {
                       variant={"outline"}
                       className={cn(
                         "w-full pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? (
