@@ -13,3 +13,27 @@ if (!fs.existsSync(dataDir)) {
 const dbPath = path.join(dataDir, 'local.db');
 const sqlite = new Database(dbPath);
 export const db = drizzle(sqlite, { schema });
+
+// Inicializar las tablas si no existen
+const createTablesSQL = `
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS transactions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  amount INTEGER NOT NULL,
+  type TEXT NOT NULL CHECK(type IN ('payment', 'withdrawal')),
+  description TEXT,
+  payer TEXT,
+  withdrawn_by TEXT,
+  date INTEGER NOT NULL DEFAULT (unixepoch()),
+  notes TEXT
+);
+`;
+
+// Ejecutar las sentencias SQL
+sqlite.exec(createTablesSQL);
