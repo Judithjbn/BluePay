@@ -48,8 +48,8 @@ export function TransactionList() {
     queryKey: [
       "/api/transactions",
       {
-        startDate: startOfMonth(selectedMonth).toISOString(),
-        endDate: endOfMonth(selectedMonth).toISOString(),
+        startDate: format(startOfMonth(selectedMonth), 'yyyy-MM-dd'),
+        endDate: format(endOfMonth(selectedMonth), 'yyyy-MM-dd'),
       },
     ],
   });

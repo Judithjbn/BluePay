@@ -62,7 +62,7 @@ export default function HomePage() {
                   currency: 'EUR',
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
-                }).format((balanceData?.balance || 0) / 100)}
+                }).format(balanceData?.balance ?? 0)}
               </p>
             </CardContent>
           </Card>
