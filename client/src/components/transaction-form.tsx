@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { InsertTransaction, insertTransactionSchema } from "@shared/schema";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { Calendar as CalendarIcon, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +23,7 @@ export function TransactionForm() {
     defaultValues: {
       type: "payment",
       date: new Date(),
-      amount: 0, // Changed default to 0
+      amount: 0,
       payer: "",
       withdrawnBy: "",
       notes: "",
@@ -40,14 +41,14 @@ export function TransactionForm() {
       form.reset({
         type: "payment",
         date: new Date(),
-        amount: 0, // Changed default to 0
+        amount: 0,
         payer: "",
         withdrawnBy: "",
         notes: "",
       });
       toast({
-        title: "Success",
-        description: "Transaction created successfully",
+        title: "Éxito",
+        description: "Transacción creada correctamente",
       });
     },
     onError: (error: Error) => {
@@ -70,19 +71,19 @@ export function TransactionForm() {
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Type</FormLabel>
+              <FormLabel>Tipo</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.value}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue placeholder="Seleccionar tipo" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="payment">Payment</SelectItem>
-                  <SelectItem value="withdrawal">Withdrawal</SelectItem>
+                  <SelectItem value="payment">Pago</SelectItem>
+                  <SelectItem value="withdrawal">Retiro</SelectItem>
                 </SelectContent>
               </Select>
             </FormItem>
@@ -94,7 +95,7 @@ export function TransactionForm() {
           name="date"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date</FormLabel>
+              <FormLabel>Fecha</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -106,9 +107,9 @@ export function TransactionForm() {
                       )}
                     >
                       {field.value ? (
-                        format(field.value, "PPP")
+                        format(field.value, "PPP", { locale: es })
                       ) : (
-                        <span>Pick a date</span>
+                        <span>Seleccionar fecha</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
@@ -123,6 +124,7 @@ export function TransactionForm() {
                       date > new Date() || date < new Date("1900-01-01")
                     }
                     initialFocus
+                    locale={es}
                   />
                 </PopoverContent>
               </Popover>
@@ -135,14 +137,14 @@ export function TransactionForm() {
           name="amount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Amount</FormLabel>
+              <FormLabel>Cantidad (€)</FormLabel>
               <FormControl>
                 <Input
                   type="number"
                   step="0.01"
                   placeholder="0.00"
                   {...field}
-                  onChange={(e) => field.onChange(parseFloat(e.target.value))} // Corrected onChange
+                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
                 />
               </FormControl>
             </FormItem>
@@ -155,7 +157,7 @@ export function TransactionForm() {
             name="payer"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Payer</FormLabel>
+                <FormLabel>Pagador</FormLabel>
                 <FormControl>
                   <Input {...field} value={field.value || ""} />
                 </FormControl>
@@ -170,7 +172,7 @@ export function TransactionForm() {
             name="withdrawnBy"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Withdrawn By</FormLabel>
+                <FormLabel>Retirado Por</FormLabel>
                 <FormControl>
                   <Input {...field} value={field.value || ""} />
                 </FormControl>
@@ -184,7 +186,7 @@ export function TransactionForm() {
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes</FormLabel>
+              <FormLabel>Notas</FormLabel>
               <FormControl>
                 <Textarea {...field} value={field.value || ""} />
               </FormControl>
@@ -196,7 +198,7 @@ export function TransactionForm() {
           {mutation.isPending && (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           )}
-          Save Transaction
+          Guardar Transacción
         </Button>
       </form>
     </Form>

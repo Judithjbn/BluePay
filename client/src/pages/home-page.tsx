@@ -20,7 +20,7 @@ export default function HomePage() {
           <h1 className="text-2xl font-bold text-primary">BluePay</h1>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">
-              Welcome, {user?.username}
+              Bienvenido, {user?.username}
             </span>
             <Button
               variant="ghost"
@@ -37,7 +37,7 @@ export default function HomePage() {
         <div className="grid md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>New Transaction</CardTitle>
+              <CardTitle>Nueva Transacción</CardTitle>
             </CardHeader>
             <CardContent>
               <TransactionForm />
@@ -46,7 +46,7 @@ export default function HomePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Current Balance</CardTitle>
+              <CardTitle>Balance Actual</CardTitle>
             </CardHeader>
             <CardContent>
               <p className={cn(
@@ -57,7 +57,10 @@ export default function HomePage() {
                   ? "text-green-600"
                   : "text-red-600"
               )}>
-                ${((balanceData?.balance || 0) / 100).toFixed(2)}
+                {new Intl.NumberFormat('es-ES', {
+                  style: 'currency',
+                  currency: 'EUR'
+                }).format((balanceData?.balance || 0) / 100)}
               </p>
             </CardContent>
           </Card>

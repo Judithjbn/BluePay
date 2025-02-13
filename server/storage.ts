@@ -47,7 +47,7 @@ export class DatabaseStorage implements IStorage {
     // Ensure date is a valid Date object
     const date = new Date(transaction.date);
     if (isNaN(date.getTime())) {
-      throw new Error("Invalid date");
+      throw new Error("Fecha inválida");
     }
 
     const [newTransaction] = await db
@@ -62,13 +62,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTransactions(userId: number, startDate: Date, endDate: Date): Promise<Transaction[]> {
-    // Ensure dates are valid
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      throw new Error("Invalid date range");
+    // Ensure dates are valid Date objects
+    if (!(startDate instanceof Date) || !(endDate instanceof Date)) {
+      throw new Error("Las fechas deben ser objetos Date válidos");
     }
+
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      throw new Error("Rango de fechas inválido");
+    }
+
+    // Convert dates to UTC to match database storage
+    const utcStart = new Date(startDate.toISOString());
+    const utcEnd = new Date(endDate.toISOString());
 
     return await db
       .select()
@@ -76,8 +81,8 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(transactions.userId, userId),
-          gte(transactions.date, start),
-          lte(transactions.date, end)
+          gte(transactions.date, utcStart),
+          lte(transactions.date, utcEnd)
         )
       )
       .orderBy(transactions.date);

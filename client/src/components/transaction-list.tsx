@@ -15,6 +15,7 @@ import {
 import { Transaction } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
 import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
+import { es } from "date-fns/locale";
 import {
   Table,
   TableBody,
@@ -47,8 +48,8 @@ export function TransactionList() {
     queryKey: [
       "/api/transactions",
       {
-        startDate: format(startOfMonth(selectedMonth), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
-        endDate: format(endOfMonth(selectedMonth), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
+        startDate: startOfMonth(selectedMonth).toISOString(),
+        endDate: endOfMonth(selectedMonth).toISOString(),
       },
     ],
   });
@@ -66,9 +67,9 @@ export function TransactionList() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Transactions</CardTitle>
+            <CardTitle>Historial de Transacciones</CardTitle>
             <CardDescription>
-              View and export your transaction history
+              Ver y exportar tu historial de transacciones
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -77,7 +78,7 @@ export function TransactionList() {
               onValueChange={(value) => setSelectedMonth(new Date(value))}
             >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select month" />
+                <SelectValue placeholder="Seleccionar mes" />
               </SelectTrigger>
               <SelectContent>
                 {months.map((month) => (
@@ -85,7 +86,7 @@ export function TransactionList() {
                     key={format(month, "yyyy-MM-dd")}
                     value={format(month, "yyyy-MM-dd")}
                   >
-                    {format(month, "MMMM yyyy")}
+                    {format(month, "MMMM yyyy", { locale: es })}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -104,21 +105,21 @@ export function TransactionList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Payer/Withdrawn By</TableHead>
-              <TableHead>Notes</TableHead>
+              <TableHead>Fecha</TableHead>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Cantidad</TableHead>
+              <TableHead>Pagador/Retirado Por</TableHead>
+              <TableHead>Notas</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {transactions?.map((transaction) => (
               <TableRow key={transaction.id}>
                 <TableCell>
-                  {format(new Date(transaction.date), "MM/dd/yyyy")}
+                  {format(new Date(transaction.date), "dd/MM/yyyy")}
                 </TableCell>
                 <TableCell className="capitalize">
-                  {transaction.type}
+                  {transaction.type === "payment" ? "Pago" : "Retiro"}
                 </TableCell>
                 <TableCell
                   className={cn(
@@ -127,7 +128,10 @@ export function TransactionList() {
                       : "text-red-600"
                   )}
                 >
-                  ${(transaction.amount / 100).toFixed(2)}
+                  {new Intl.NumberFormat('es-ES', {
+                    style: 'currency',
+                    currency: 'EUR'
+                  }).format(transaction.amount / 100)}
                 </TableCell>
                 <TableCell>
                   {transaction.type === "payment"

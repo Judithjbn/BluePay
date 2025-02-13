@@ -12,12 +12,13 @@ export function registerRoutes(app: Express): Server {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
+      // Parse dates and validate
       const startDate = new Date(req.query.startDate as string);
       const endDate = new Date(req.query.endDate as string);
 
       // Validate dates
       if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        return res.status(400).json({ message: "Invalid date format" });
+        return res.status(400).json({ message: "Formato de fecha inválido" });
       }
 
       const transactions = await storage.getTransactions(
@@ -29,7 +30,7 @@ export function registerRoutes(app: Express): Server {
       res.json(transactions);
     } catch (error) {
       console.error("Error getting transactions:", error);
-      res.status(500).json({ message: "Error retrieving transactions" });
+      res.status(500).json({ message: "Error al obtener las transacciones" });
     }
   });
 
@@ -47,7 +48,7 @@ export function registerRoutes(app: Express): Server {
       res.status(201).json(transaction);
     } catch (error) {
       console.error("Error creating transaction:", error);
-      res.status(500).json({ message: "Error creating transaction" });
+      res.status(500).json({ message: "Error al crear la transacción" });
     }
   });
 
@@ -60,7 +61,7 @@ export function registerRoutes(app: Express): Server {
       res.json({ balance });
     } catch (error) {
       console.error("Error getting balance:", error);
-      res.status(500).json({ message: "Error retrieving balance" });
+      res.status(500).json({ message: "Error al obtener el balance" });
     }
   });
 

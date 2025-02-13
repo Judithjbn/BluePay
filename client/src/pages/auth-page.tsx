@@ -31,14 +31,14 @@ export default function AuthPage() {
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl text-center">
-              Welcome to BluePay
+              Bienvenido a BluePay
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="login">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="register">Register</TabsTrigger>
+                <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
+                <TabsTrigger value="register">Registrarse</TabsTrigger>
               </TabsList>
 
               <TabsContent value="login">
@@ -49,14 +49,14 @@ export default function AuthPage() {
                   className="space-y-4"
                 >
                   <div className="space-y-2">
-                    <Label htmlFor="username">Username</Label>
+                    <Label htmlFor="username">Usuario</Label>
                     <Input
                       id="username"
                       {...loginForm.register("username")}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">Contraseña</Label>
                     <Input
                       id="password"
                       type="password"
@@ -71,7 +71,7 @@ export default function AuthPage() {
                     {loginMutation.isPending && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     )}
-                    Login
+                    Iniciar Sesión
                   </Button>
                 </form>
               </TabsContent>
@@ -84,14 +84,14 @@ export default function AuthPage() {
                   className="space-y-4"
                 >
                   <div className="space-y-2">
-                    <Label htmlFor="reg-username">Username</Label>
+                    <Label htmlFor="reg-username">Usuario</Label>
                     <Input
                       id="reg-username"
                       {...registerForm.register("username")}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reg-password">Password</Label>
+                    <Label htmlFor="reg-password">Contraseña</Label>
                     <Input
                       id="reg-password"
                       type="password"
@@ -106,7 +106,7 @@ export default function AuthPage() {
                     {registerMutation.isPending && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     )}
-                    Register
+                    Registrarse
                   </Button>
                 </form>
               </TabsContent>
@@ -116,10 +116,10 @@ export default function AuthPage() {
       </div>
       <div className="flex-1 bg-primary p-6 text-primary-foreground flex items-center justify-center">
         <div className="max-w-md space-y-4">
-          <h1 className="text-4xl font-bold">Track Your Payments</h1>
+          <h1 className="text-4xl font-bold">Gestiona tus Pagos</h1>
           <p className="text-lg">
-            BluePay helps you keep track of payments and withdrawals with ease.
-            Export your transactions to Excel for better financial management.
+            BluePay te ayuda a llevar un registro de pagos y retiros fácilmente.
+            Exporta tus transacciones a Excel para una mejor gestión financiera.
           </p>
         </div>
       </div>
