@@ -62,6 +62,24 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  // Delete transaction
+  app.delete("/api/transactions/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const transactionId = parseInt(req.params.id);
+    if (isNaN(transactionId)) {
+      return res.status(400).json({ message: "ID de transacción inválido" });
+    }
+
+    try {
+      await storage.deleteTransaction(req.user!.id, transactionId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error deleting transaction:", error);
+      res.status(500).json({ message: "Error al eliminar la transacción" });
+    }
+  });
+
   // Get current balance
   app.get("/api/balance", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);

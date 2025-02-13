@@ -15,6 +15,7 @@ export interface IStorage {
   createTransaction(userId: number, transaction: InsertTransaction): Promise<Transaction>;
   getTransactions(userId: number, startDate: Date, endDate: Date): Promise<Transaction[]>;
   getCurrentBalance(userId: number): Promise<number>;
+  deleteTransaction(userId: number, transactionId: number): Promise<void>;
   sessionStore: session.Store;
 }
 
@@ -107,6 +108,32 @@ export class DatabaseStorage implements IStorage {
     return allTransactions.reduce((acc, t) => {
       return acc + (t.type === "payment" ? t.amount : -t.amount);
     }, 0);
+  }
+
+  async deleteTransaction(userId: number, transactionId: number): Promise<void> {
+    // Verificar que la transacción pertenece al usuario antes de eliminar
+    const [transaction] = await db
+      .select()
+      .from(transactions)
+      .where(
+        and(
+          eq(transactions.id, transactionId),
+          eq(transactions.userId, userId)
+        )
+      );
+
+    if (!transaction) {
+      throw new Error("Transacción no encontrada o no autorizada");
+    }
+
+    await db
+      .delete(transactions)
+      .where(
+        and(
+          eq(transactions.id, transactionId),
+          eq(transactions.userId, userId)
+        )
+      );
   }
 }
 
