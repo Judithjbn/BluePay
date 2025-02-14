@@ -21,5 +21,15 @@ export default defineConfig({
     emptyOutDir: true,
     assetsDir: "assets",
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://bluepay-server.replit.app",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+
 
 });
